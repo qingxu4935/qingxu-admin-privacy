@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>隐私政策（青序后台 / Qingxu Admin）</title>
+  <style>
+    :root { color-scheme: light dark; }
+    body {
+      font-family: "Microsoft YaHei", "PingFang SC", "Segoe UI", sans-serif;
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 32px 20px 64px;
+      line-height: 1.75;
+      color: #1f2328;
+      background: #fff;
+    }
+    @media (prefers-color-scheme: dark) {
+      body { color: #e6e6e6; background: #121212; }
+      table td, table th { border-color: #3a3a3a; }
+    }
+    h1 { font-size: 1.6rem; margin-bottom: 4px; }
+    h2 { font-size: 1.15rem; margin-top: 32px; border-left: 4px solid #b91c1c; padding-left: 10px; }
+    .meta { color: #6a737d; font-size: 0.9rem; margin-bottom: 24px; }
+    table { border-collapse: collapse; width: 100%; margin: 12px 0; }
+    th, td { border: 1px solid #d0d7de; padding: 8px 10px; text-align: left; font-size: 0.92rem; }
+    th { background: rgba(127,127,127,0.08); }
+    code { background: rgba(127,127,127,0.12); padding: 1px 5px; border-radius: 4px; font-size: 0.9em; }
+    .note { background: rgba(185,28,28,0.08); border-left: 4px solid #b91c1c; padding: 10px 14px; margin: 16px 0; }
+  </style>
+</head>
+<body>
+  <h1>隐私政策（青序后台 / Qingxu Admin）</h1>
+  <div class="meta">生效日期：2026-10-06 · 开发者：Qingxu4935</div>
+
+  <h2>一句话</h2>
+  <p>青序后台把数据留在你自己的设备上：<strong>不收集</strong>、<strong>不上传</strong>、<strong>不共享</strong>任何个人信息，没有遥测、没有广告、没有第三方分析 SDK。</p>
+
+  <h2>我们收集什么</h2>
+  <p>什么都不收集。应用不发送崩溃报告、不统计使用行为、不含任何第三方分析 SDK，也没有账号体系外的服务器——所有持久化内容都只写在你自己这台机器上。应用只在你自己的设备上保存“你正在用的这份演示/自建数据”，包括：</p>
+  <ul>
+    <li><strong>账号与凭据</strong>：用户名、昵称、角色、部门、锁定状态，以及口令的 PBKDF2-SHA256 哈希（10 万次迭代 + 每账号随机盐）。<strong>口令明文不落盘、不传输。</strong></li>
+    <li><strong>你录入的业务数据</strong>：订单 / 订单行 / 客户 / 商品等记录、数据字典、系统参数、公告与已读状态、附件元数据与附件字节。</li>
+    <li><strong>界面状态</strong>：主题与布局设置、菜单树改动、表格列宽与筛选状态、审计日志、权限策略快照、当前登录会话、离线写队列。</li>
+    <li><strong>个人化内容</strong>：你为自己账号选的头像图片。</li>
+  </ul>
+
+  <h2>你的数据存在哪里</h2>
+  <p><strong>桌面版</strong>（全部在本机，不经过任何服务器）：</p>
+  <ul>
+    <li>主要数据走 Akavache，落在 machine store（不是 <code>%LOCALAPPDATA%</code>）：<br>
+      <code>C:\ProgramData\IsolatedStorage\...\AssemFiles\Qingxu4935.Admin\LocalMachine\LocalMachine.db</code><br>
+      这是一个 SQLite 文件，存账号与口令哈希、设置、菜单树、审计日志、权限策略、部门树、会话、业务记录、字典、参数、公告、附件元数据与离线写队列。从 Microsoft Store 安装时，其中落在 <code>%LOCALAPPDATA%</code> 的部分位于应用的包容器目录下。</li>
+    <li>附件字节：<code>%LOCALAPPDATA%\Qingxu4935.Admin\files\&lt;32 位十六进制&gt;.bin</code>（一附件一文件）。</li>
+    <li>若在设置里把数据源切成 SQLite 文件：<code>%LOCALAPPDATA%\Qingxu4935\QingxuAdmin\admin-users.db</code>（只放用户表；首次启动自建并播种演示用户）。</li>
+  </ul>
+  <p><strong>Web 版</strong>（只在这台机器的浏览器里）：持久化落在 IndexedDB 数据库 <code>qingxu-admin</code>，登录会话另存一条记录。</p>
+  <p><strong>导入 / 导出的文件</strong>：落点由你在系统文件对话框里选（导出 Excel、打印 PNG 等），应用不复制、不留副本；Web 版导出走浏览器下载，落点由浏览器决定。</p>
+
+  <h2>什么时候会联网</h2>
+  <p>默认状态下<strong>应用自己不发起任何网络请求</strong>：不上传数据、不检查更新、不回调服务端。只有下面三种显式动作会联网，且都由你触发或由你配置：</p>
+  <ol>
+    <li><strong>你配置了外部身份提供方时</strong>（OAuth2 / OpenID Connect）：点登录按钮后，应用请求你配置的 <code>issuer</code> 发现文档，并在本机临时起 <code>http://127.0.0.1:&lt;port&gt;/callback</code> 接收回调，然后把授权码换成令牌。未配置（<code>issuer</code> / <code>clientId</code> 为空）时该提供方判为未就绪，不联网。</li>
+    <li><strong>演示页的「打开 PDF / 打开视频」按钮</strong>：会把公开示例地址交给系统默认浏览器。应用本身不内嵌浏览器、不预取；点之前不联网，之后的访问由那个网站自己负责。</li>
+    <li><strong>数据源选 REST 时</strong>：当前版本尚未实现该网关，选中后只记一条警告并继续用演示数据，不发起请求。将来接入后端时，本政策会先更新并写明发送什么、发到哪里。</li>
+  </ol>
+  <p>应用不声明 <code>internetClient</code> 能力。</p>
+
+  <h2>怎么删</h2>
+  <p><strong>桌面版</strong>：先退出应用（运行中的应用会锁库文件），然后</p>
+  <ul>
+    <li>清全部数据：删掉 <code>C:\ProgramData\IsolatedStorage\...\AssemFiles\Qingxu4935.Admin\LocalMachine\</code> 下的 <code>LocalMachine.db</code>，以及 <code>%LOCALAPPDATA%\Qingxu4935.Admin\files\</code> 整个目录；下次启动会重新播种演示数据。</li>
+    <li>只重置凭据（保留其它数据）：删除存储键 <code>admin_accounts_v1</code> 后重启。</li>
+    <li>清 SQLite 用户库：删掉 <code>%LOCALAPPDATA%\Qingxu4935\QingxuAdmin\admin-users.db</code>。</li>
+    <li>装成 MSIX（Microsoft Store）时：<code>%LOCALAPPDATA%</code> 里的写入落在包的私有存储，卸载即随包删除；<strong><code>C:\ProgramData</code> 下的 machine store 不在包内，卸载不会替你清</strong>，要按上面手动删。</li>
+  </ul>
+  <p><strong>Web 版</strong>：在浏览器站点数据里删掉 IndexedDB 数据库 <code>qingxu-admin</code>（或直接清站点数据）即抹掉全部持久化内容。</p>
+
+  <h2>儿童与年龄分级</h2>
+  <p>应用不面向儿童、不含广告、不收集任何数据；Microsoft Store 年龄分级为 4+。应用内的演示数据（订单、客户、商品、账号）全部是本机播种的样例，与真实个人无关。</p>
+
+  <h2>权限说明（MSIX 清单）</h2>
+  <table>
+    <thead>
+      <tr><th>能力</th><th>用途</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>runFullTrust</code></td>
+        <td>桌面（Win32）应用打包为 MSIX 所必需；提供对文件系统的正常访问，用于上面那些本机数据与你主动导入 / 导出的文件</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>变更</h2>
+  <p>若未来版本新增联网功能（例如云同步或 REST 后端），本政策会先更新并写明发送什么、发到哪里，再发布该版本。</p>
+
+  <h2>联系我们</h2>
+  <p>疑问、数据清理协助或安全报告，请邮件至：<strong>qingxu4935@163.com</strong>（GitHub：<a href="https://github.com/qingxu4935">qingxu4935</a>）。</p>
+</body>
+</html>
